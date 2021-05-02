@@ -40,8 +40,8 @@ class BaseDS(BaseEstimator, ClassifierMixin):
     @abstractmethod
     def __init__(self, pool_classifiers=None, k=7, DFP=False, with_IH=False,
                  safe_k=None, IH_rate=0.30, needs_proba=False,
-                 random_state=None, knn_classifier='knn', DSEL_perc=0.5,
-                 knne=False, n_jobs=-1):
+                 random_state=None, knn_classifier='knn', neighbor_metric="minkowski",
+                 DSEL_perc=0.5, knne=False, n_jobs=-1):
 
         self.pool_classifiers = pool_classifiers
         self.k = k
@@ -52,6 +52,7 @@ class BaseDS(BaseEstimator, ClassifierMixin):
         self.needs_proba = needs_proba
         self.random_state = random_state
         self.knn_classifier = knn_classifier
+        self.neighbor_metric = neighbor_metric
         self.DSEL_perc = DSEL_perc
         self.knne = knne
         self.n_jobs = n_jobs
@@ -343,7 +344,8 @@ class BaseDS(BaseEstimator, ClassifierMixin):
                                                                   'sklearn']:
             knn_class = functools.partial(KNeighborsClassifier,
                                           n_jobs=self.n_jobs,
-                                          algorithm="auto")
+                                          algorithm="auto",
+                                          metric=self.neighbor_metric)
         elif self.knn_classifier == 'faiss':
             knn_class = functools.partial(
                 faiss_knn_wrapper.FaissKNNClassifier,

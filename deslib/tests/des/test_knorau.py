@@ -53,3 +53,32 @@ def test_select():
     expected = np.atleast_2d([False, True, True])
     selected = knorau_test.select(competences)
     assert np.array_equal(expected, selected)
+
+
+def test_competence_equivalence(example_estimate_competence,
+                                   create_pool_classifiers):
+    from sklearn.neighbors import DistanceMetric
+
+    def sample_metric(u, v):
+        return np.sqrt(np.power(u-v, 2))
+
+    knorau_default = KNORAU(create_pool_classifiers)
+    knorau_sample = KNORAU(create_pool_classifiers, neighbor_metric=sample_metric)
+    
+    X, y, neighbors = example_estimate_competence[0:3]
+
+    query = np.ones((3, 2))
+    expected = np.array([[4.0, 3.0, 4.0],
+                         [5.0, 2.0, 5.0],
+                         [2.0, 5.0, 2.0]])
+
+    knorau_default.fit(X, y)
+    knorau_sample.fit(X, y)
+
+    competences_default = knorau_default.estimate_competence(query, neighbors)
+    competences_sample = knorau_sample.estimate_competence(query, neighbors)
+
+    assert np.allclose(competences_default, expected)
+    assert np.allclose(competences_sample, expected)
+    assert np.allclose(competences_default, competences_sample)
+    

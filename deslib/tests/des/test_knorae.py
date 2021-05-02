@@ -70,3 +70,32 @@ def test_predict_proba(create_X_y):
     clf1 = Perceptron()
     clf1.fit(X, y)
     KNORAE([clf1, clf1]).fit(X, y)
+
+
+def test_competence_equivalence(example_estimate_competence,
+                                   create_pool_classifiers):
+    from sklearn.neighbors import DistanceMetric
+
+    def sample_metric(u, v):
+        return np.sqrt(np.power(u-v, 2))
+
+    knorae_default = KNORAE(create_pool_classifiers)
+    knorae_sample = KNORAE(create_pool_classifiers, neighbor_metric=sample_metric)
+    
+    X, y, neighbors = example_estimate_competence[0:3]
+
+    query = np.ones((3, 2))
+    expected = np.array([[1.0, 0.0, 1.0],
+                         [2.0, 0.0, 2.0],
+                         [0.0, 3.0, 0.0]])
+
+    knorae_default.fit(X, y)
+    knorae_sample.fit(X, y)
+
+    competences_default = knorae_default.estimate_competence(query, neighbors)
+    competences_sample = knorae_sample.estimate_competence(query, neighbors)
+
+    assert np.allclose(competences_default, expected)
+    assert np.allclose(competences_sample, expected)
+    assert np.allclose(competences_default, competences_sample)
+    

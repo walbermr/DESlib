@@ -21,7 +21,9 @@ class BaseDES(BaseDS):
     def __init__(self, pool_classifiers=None, k=7, DFP=False, with_IH=False,
                  safe_k=None, IH_rate=0.30, mode='selection',
                  needs_proba=False, random_state=None,
-                 knn_classifier='knn', knne=False, DSEL_perc=0.5, n_jobs=-1):
+                 knn_classifier='knn',
+                 neighbor_metric="minkowski",
+                 knne=False, DSEL_perc=0.5, n_jobs=-1):
 
         super(BaseDES, self).__init__(pool_classifiers=pool_classifiers,
                                       k=k,
@@ -32,6 +34,7 @@ class BaseDES(BaseDS):
                                       needs_proba=needs_proba,
                                       random_state=random_state,
                                       knn_classifier=knn_classifier,
+                                      neighbor_metric=neighbor_metric,
                                       knne=knne,
                                       DSEL_perc=DSEL_perc, n_jobs=n_jobs)
         self.mode = mode
