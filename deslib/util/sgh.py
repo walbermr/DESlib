@@ -139,9 +139,9 @@ class SGH(BaseEnsemble):
     IEEE, 2017, pp. 332-339.
 
     """
-    def __init__(self):
+    def __init__(self, base_estimator=SGDClassifier):
 
-        super(SGH, self).__init__(base_estimator=SGDClassifier,
+        super(SGH, self).__init__(base_estimator=base_estimator,
                                   n_estimators=1)
 
         # Pool initially empty
